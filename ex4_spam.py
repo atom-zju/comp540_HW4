@@ -26,7 +26,10 @@ y_test = test_data['ytest'].flatten()
 #############################################################################
 # your experiments below
 
-X_train, X_val, y_train, y_val = train_test_split(X, y, test_size=0.2, random_state=42)
+X_train, X_val, y_train, y_val = train_test_split(X, y, test_size=0.8, random_state=42)
+
+print X_train.shape
+print X_val.shape
 
 svm = LinearSVM_twoclass()
 svm.theta = np.zeros((X.shape[1],))
@@ -46,7 +49,7 @@ for sigma_val in sigma_vals:
     scaler = preprocessing.StandardScaler().fit(K)
     scaleK = scaler.transform(K)
     KK = np.hstack([np.ones((scaleK.shape[0],1)),scaleK])
-    Kval = np.array([utils.gaussian_kernel(x1,x2,sigma_val) for x1 in X_val for x2 in X_train]).reshape(X_val.shape[0],X.shape[0])
+    Kval = np.array([utils.gaussian_kernel(x1,x2,sigma_val) for x1 in X_val for x2 in X_train]).reshape(X_val.shape[0],X_train.shape[0])
     scaleKval = scaler.transform(Kval)
     KKval = np.hstack([np.ones((scaleKval.shape[0],1)),scaleKval])
     for Cval in Cvals:
@@ -54,7 +57,7 @@ for sigma_val in sigma_vals:
             for iteration in iterations:
                 svm = LinearSVM_twoclass()
                 svm.theta = np.zeros((KK.shape[1],))
-                svm.train(KK,yy,learning_rate=learning_rate,C=Cval,num_iters=iteration,verbose=True)
+                svm.train(KK,y_train,learning_rate=learning_rate,C=Cval,num_iters=iteration,verbose=True)
                 y_pred = svm.predict(KKval)
                 acc = np.mean(y_pred == y_val)
                 if acc > best_acc:
@@ -120,7 +123,7 @@ for c_ in c_s:
     scaler = preprocessing.StandardScaler().fit(K)
     scaleK = scaler.transform(K)
     KK = np.hstack([np.ones((scaleK.shape[0],1)),scaleK])
-    Kval = np.array([utils.quadraric_kernel(x1,x2,c_) for x1 in X_val for x2 in X_train]).reshape(X_val.shape[0],X.shape[0])
+    Kval = np.array([utils.quadraric_kernel(x1,x2,c_) for x1 in X_val for x2 in X_train]).reshape(X_val.shape[0],X_train.shape[0])
     scaleKval = scaler.transform(Kval)
     KKval = np.hstack([np.ones((scaleKval.shape[0],1)),scaleKval])
     for Cval in Cvals:
@@ -128,7 +131,7 @@ for c_ in c_s:
             for iteration in iterations:
                 svm = LinearSVM_twoclass()
                 svm.theta = np.zeros((KK.shape[1],))
-                svm.train(KK,yy,learning_rate=learning_rate,C=Cval,num_iters=iteration,verbose=True)
+                svm.train(KK,y_train,learning_rate=learning_rate,C=Cval,num_iters=iteration,verbose=True)
                 y_pred = svm.predict(KKval)
                 acc = np.mean(y_pred == y_val)
                 if acc > best_acc:
