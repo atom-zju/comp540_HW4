@@ -25,7 +25,7 @@ def svm_loss_twoclass(theta, X, y, C):
   # 2-3 lines of code expected                                         #
   ######################################################################
   margin = y*X.dot(theta)
-  J = np.sum(theta**2) / (2*m) + C * np.sum(margin[(1-margin) > 0]) / m
+  J = np.sum(theta**2) / (2*m) + C * np.sum(1-margin[(1-margin) > 0]) / m
   grad = theta / m - C * np.sum((X*(y[:,None]))[margin < 1,:],axis=0) / m
   ######################################################################
   # end of your code                                                   #
